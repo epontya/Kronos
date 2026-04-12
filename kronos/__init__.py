@@ -1,7 +1,10 @@
-"""
-Kronos - A time series forecasting library for financial markets.
+"""Kronos - A time series forecasting library for financial markets.
 
 Fork of shiyu-coder/Kronos with additional features and improvements.
+
+Personal fork notes:
+- Using this for experimenting with stock price prediction
+- See /notebooks for example usage
 """
 
 from kronos.model import Kronos
