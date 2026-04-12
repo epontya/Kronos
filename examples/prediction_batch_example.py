@@ -54,10 +54,12 @@ lookback = 400
 pred_len = 120
 
 # Using 10 samples instead of 5 to get a better sense of model performance across the dataset
+# Increased num_samples to 20 to cover more of the dataset for a more thorough evaluation
+num_samples = 20
 dfs = []
 xtsp = []
 ytsp = []
-for i in range(10):
+for i in range(num_samples):
     idf = df.loc[(i*400):(i*400+lookback-1), ['open', 'high', 'low', 'close', 'volume', 'amount']]
     i_x_timestamp = df.loc[(i*400):(i*400+lookback-1), 'timestamps']
     i_y_timestamp = df.loc[(i*400+lookback):(i*400+lookback+pred_len-1), 'timestamps']
