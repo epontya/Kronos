@@ -53,16 +53,23 @@ df['timestamps'] = pd.to_datetime(df['timestamps'])
 lookback = 400
 pred_len = 120
 
-# Using 10 samples instead of 5 to get a better sense of model performance across the dataset
-# Increased num_samples to 20 to cover more of the dataset for a more thorough evaluation
+# Using 20 samples for a broad evaluation; adjust num_samples as needed.
+# Note: each sample starts at a stride of 400 bars, so with num_samples=20
+# we cover the first 20*400+lookback+pred_len rows of the dataset.
 num_samples = 20
+
+# stride controls the gap between sample start points;
+# setting it equal to lookback avoids overlapping context windows
+stride = lookback
+
 dfs = []
 xtsp = []
 ytsp = []
 for i in range(num_samples):
-    idf = df.loc[(i*400):(i*400+lookback-1), ['open', 'high', 'low', 'close', 'volume', 'amount']]
-    i_x_timestamp = df.loc[(i*400):(i*400+lookback-1), 'timestamps']
-    i_y_timestamp = df.loc[(i*400+lookback):(i*400+lookback+pred_len-1), 'timestamps']
+    start = i * stride
+    idf = df.loc[start:(start + lookback - 1), ['open', 'high', 'low', 'close', 'volume', 'amount']]
+    i_x_timestamp = df.loc[start:(start + lookback - 1), 'timestamps']
+    i_y_timestamp = df.loc[(start + lookback):(start + lookback + pred_len - 1), 'timestamps']
 
     dfs.append(idf)
     xtsp.append(i_x_timestamp)
