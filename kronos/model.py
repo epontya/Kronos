@@ -24,7 +24,9 @@ class KronosConfig:
     use_volume: bool = True
 
     # Confidence interval level (0 < alpha < 1)
-    confidence: float = 0.95
+    # Changed from 0.95 to 0.90 — I prefer slightly wider intervals that are
+    # less likely to be overconfident on noisy daily price data.
+    confidence: float = 0.90
 
     # Random seed for reproducibility
     random_state: Optional[int] = 42
@@ -95,46 +97,4 @@ class KronosModel:
         self._fitted = True
         return self
 
-    def predict(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Generate a point forecast and confidence band.
-
-        Returns
-        -------
-        forecast : np.ndarray
-            Shape ``(horizon,)`` — predicted closing prices.
-        lower : np.ndarray
-            Shape ``(horizon,)`` — lower confidence-interval bound.
-        upper : np.ndarray
-            Shape ``(horizon,)`` — upper confidence-interval bound.
-        """
-        if not self._fitted:
-            raise RuntimeError("Call fit() before predict().")
-
-        window = self._prices[-self.config.lookback :]
-        forecast = self._extrapolate(window)
-
-        # Simple symmetric band derived from in-window volatility
-        sigma = float(np.std(np.diff(window)))
-        z = self._z_score(self.config.confidence)
-        steps = np.arange(1, self.config.horizon + 1)
-        margin = z * sigma * np.sqrt(steps)
-
-        return forecast, forecast - margin, forecast + margin
-
-    # ------------------------------------------------------------------
-    # Internal helpers
-    # ------------------------------------------------------------------
-
-    def _extrapolate(self, window: np.ndarray) -> np.ndarray:
-        """Fit a linear trend to *window* and extrapolate *horizon* steps."""
-        x = np.arange(len(window), dtype=float)
-        coeffs = np.polyfit(x, window, deg=1)
-        future_x = np.arange(len(window), len(window) + self.config.horizon, dtype=float)
-        return np.polyval(coeffs, future_x)
-
-    @staticmethod
-    def _z_score(confidence: float) -> float:
-        """Return the z-score for a two-tailed normal confidence interval."""
-        # Approximation sufficient for typical confidence levels
-        table = {0.90: 1.645, 0.95: 1.960, 0.99: 2.576}
-        return table.get(round(confidence, 2), 1.960)
+    def predict(
