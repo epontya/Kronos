@@ -66,9 +66,4 @@
     <img src="figures/overview.png" alt="" align="center" width="700px" />
 </p>
 
-> **Personal note:** I'm exploring Kronos primarily for crypto market analysis (BTC/ETH daily candles).
-> The two-stage tokenization approach is particularly interesting — planning to experiment with
-> different VQ codebook sizes to see how it affects downstream forecasting accuracy.
-
-## ✨ Live Demo 
-We have set up a live demo to visualize Kronos
+> **Personal note:** I'm exploring Kronos primarily for crypto markets — specifically BTC/USDT and ETH/USDT on 1h and 4h timeframes. My main interest is in the forecasting and anomaly detection capabilities. Will update this section as I experiment further.
